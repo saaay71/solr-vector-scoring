@@ -49,7 +49,7 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8983/solr/{you
 
 ### Query documents
 Open your browser and copy the links
-Query 1
+#### Query 1
 ```
 http://localhost:8983/solr/{your-collection-name}/query?fl=name,score,vector&q={!vp f=vector vector="0.1,4.75,0.3,1.2,0.7,4.0"}
 ```
@@ -90,7 +90,7 @@ You should see the following result:
         "score":0.44909418}]
   }}
 ```
-Query 2
+#### Query 2
 Adding the parameter `cosine=false` calculates the dot product
 ```
 http://localhost:8983/solr/{your-collection-name}/query?fl=name,score,vector&q={!vp f=vector vector="0.1,4.75,0.3,1.2,0.7,4.0" cosine=false}
@@ -134,7 +134,7 @@ result of query 2:
   }}
 ```
 
-Query 3
+#### Query 3
 Quering on other fields and with vector scoring.
 ```
 http://localhost:8983/solr/{your-collection-name}/query?fl=name,score,vector&q={!vp f=vector vector="0.1,4.75,0.3,1.2,0.7,4.0" cosine=false}name="example 2","example 4"
