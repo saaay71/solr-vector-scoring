@@ -25,12 +25,11 @@ The plugin was developed and tested on Solr `6.6.0`.
     </analyzer>
   </fieldType>
 ```
-4. Add the field `vector` to schema file:
+5. Add the field `vector` to schema file:
 ```
 <field name="vector" type="VectorField" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
 ```
-You can change the field name if desired.
-5. Start Solr!
+6. Start Solr!
 
 ## Example
 
