@@ -23,17 +23,22 @@ public class VectorQuery extends Query {
 	}
 
 	@Override
-	public Weight createWeight(IndexSearcher searcher, boolean needsScores) throws IOException {
+	public Weight createWeight(IndexSearcher searcher, boolean needsScores, float boost) throws IOException {
 		Weight w;
 		if(q == null){
-			w =  new ConstantScoreWeight(this) {
+			w =  new ConstantScoreWeight(this, boost) {
+				@Override
+				public boolean isCacheable(LeafReaderContext lf) {
+					return false;
+				}
+
 				@Override
 				public Scorer scorer(LeafReaderContext context) throws IOException {
 					return new ConstantScoreScorer(this, score(), DocIdSetIterator.all(context.reader().maxDoc()));
 				}
 			};
 		}else{
-			w = searcher.createWeight(q, needsScores);
+			w = searcher.createWeight(q, needsScores, boost);
 		}
 		return w;
 	}
