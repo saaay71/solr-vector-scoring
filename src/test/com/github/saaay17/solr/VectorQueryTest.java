@@ -14,8 +14,8 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
 
     private static AtomicInteger idCounter = new AtomicInteger();
     private static String[] vectors = {
-            "0|1.55 1|3.53 2|2.3 3|0.7 4|3.44 5|2.33",
-            "0|3.54 1|0.4 2|4.16 3|4.88 4|4.28 5|4.25"
+            "|1.55 |3.53 |2.3 |0.7 |3.44 |2.33",
+            "|3.54 |0.4 |4.16 |4.88 |4.28 |4.25"
     };
     private static Iterator<String> vectorsIter = Iterables.cycle(vectors).iterator();
 
@@ -34,10 +34,19 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
     public void checkTest() throws Exception {
         System.out.println("test runs!");
         indexSampleData();
+
         assertQ(req("q", "*:*"),
                 "//*[@numFound='10']");
+
         assertQ(req("q", "{!vp f=vector vector=\"0.1,4.75,0.3,1.2,0.7,4.0\"}",
                 "fl", "name,score,vector"), "//*[@numFound='10']");
+
+        assertQ(req("q", "{!vp f=vector vector=" + vectors[0].replace("|", "").replace(" ", ",") + "}",
+                "fl", "name,score,vector"),
+                "//*[@numFound='10']",
+                "//doc[1]/float[@name='score'][.='1.0']",
+                "count(//float[@name='score'][.='1.0'])=5"
+        );
     }
 
     private void indexSampleData() throws Exception {

@@ -19,7 +19,7 @@ import org.apache.solr.common.SolrException;
 public class VectorScoreQuery extends CustomScoreQuery {	
 	List<Double> vector;
 	String field;
-	boolean cosine = true;
+	boolean cosine;
 	double queryVectorNorm = 0;
 	
 	public VectorScoreQuery(Query subQuery, String Vector, String field, boolean cosine) {
@@ -45,8 +45,8 @@ public class VectorScoreQuery extends CustomScoreQuery {
 				double docVectorNorm = 0;
 				LeafReader reader = context.reader();
 				Terms terms = reader.getTermVector(docID, field);
-				if(vector.size() != terms.size()){
-					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "indexed and input vector array must have same length");
+				if(vector == null || vector.size() == 0){
+					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "vector was not indexed");
 				}
 				TermsEnum iter = terms.iterator();
 			    BytesRef text;
@@ -55,17 +55,19 @@ public class VectorScoreQuery extends CustomScoreQuery {
 			    	float payloadValue = 0f;
 			    	PostingsEnum postings = iter.postings(null, PostingsEnum.ALL);
 			    	while (postings.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-			    		int freq = postings.freq();
-			    		while (freq-- > 0) postings.nextPosition();
+			    		final int freqs = postings.freq();
 
-			    		BytesRef payload = postings.getPayload();
-			    		payloadValue = PayloadHelper.decodeFloat(payload.bytes, payload.offset); 
-			    		
-			    		if (cosine)
-			              docVectorNorm += Math.pow(payloadValue, 2.0);
+			    		for(int freq = 0; freq < freqs; ++freq) {
+			    		    int currPos = postings.nextPosition();
+                            BytesRef payload = postings.getPayload();
+                            payloadValue = PayloadHelper.decodeFloat(payload.bytes, payload.offset);
+
+                            if (cosine)
+                                docVectorNorm += Math.pow(payloadValue, 2.0);
+
+                            score = (float)(score + payloadValue * (vector.get(currPos)));
+                        }
 			    	}
-			    		
-			    	score = (float)(score + payloadValue * (vector.get(Integer.parseInt(term))));
 			    }
 			    
 			    if (cosine) {
