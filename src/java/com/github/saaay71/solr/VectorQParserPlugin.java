@@ -36,7 +36,7 @@ public class VectorQParserPlugin extends QParserPlugin {
 					q.setQueryString(localParams.toLocalParamsString()); 
 					query = q;
 				}
-			
+
 
 				if (query == null) {
 					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Query is null");

@@ -22,7 +22,7 @@
     <fieldType name="VectorField" class="solr.TextField" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true" storeOffsetsWithPositions="true">
         <analyzer>
             <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-            <filter class="solr.DelimitedPayloadTokenFilterFactory" encoder="float"/>
+            <filter class="solr.DelimitedPayloadTokenFilterFactory" encoder="com.github.saaay71.solr.VectorPayloadEncoder"/>
         </analyzer>
     </fieldType>
     <dynamicField name="*" type="string" indexed="true" stored="true"/>

@@ -3,6 +3,8 @@ package com.github.saaay71.solr;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.payloads.PayloadHelper;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -26,12 +28,12 @@ public class VectorScoreQuery extends CustomScoreQuery {
 		super(subQuery);
 		this.field = field;
 		this.cosine = cosine;
-		this.vector = new ArrayList<Double>();
+		this.vector = new ArrayList<>();
 		String[] vectorArray = Vector.split(",");
 		for(int i=0;i<vectorArray.length;i++){
 			double v = Double.parseDouble(vectorArray[i]);
 			vector.add(v);
-			if (cosine){
+			if (cosine) {
 				queryVectorNorm += Math.pow(v, 2.0);
 			}
 		}
@@ -46,7 +48,7 @@ public class VectorScoreQuery extends CustomScoreQuery {
 				LeafReader reader = context.reader();
 				Terms terms = reader.getTermVector(docID, field);
 				if(vector == null || vector.size() == 0){
-					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "vector was not indexed");
+					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "vector could not be parsed");
 				}
 				TermsEnum iter = terms.iterator();
 			    BytesRef text;
@@ -60,7 +62,7 @@ public class VectorScoreQuery extends CustomScoreQuery {
 			    		for(int freq = 0; freq < freqs; ++freq) {
 			    		    int currPos = postings.nextPosition();
                             BytesRef payload = postings.getPayload();
-                            payloadValue = PayloadHelper.decodeFloat(payload.bytes, payload.offset);
+                            payloadValue = PayloadHelper.decodeFloat(payload.bytes, payload.offset + Integer.BYTES);
 
                             if (cosine)
                                 docVectorNorm += Math.pow(payloadValue, 2.0);
