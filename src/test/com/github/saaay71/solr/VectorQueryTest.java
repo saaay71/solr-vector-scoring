@@ -17,8 +17,8 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
 
     private static AtomicInteger idCounter = new AtomicInteger();
     private static String[] vectors = {
-            "|1,1.55 |2,3.53 |3,2.3 |4,0.7 |5,3.44 |6,2.33",
-            "|1,3.54 |2,0.4 |3,4.16 |4,4.88 |5,4.28 |6,4.25"
+            "|0,1.55 |1,3.53 |2,2.3 |3,0.7 |4,3.44 |5,2.33",
+            "|0,3.54 |1,0.4 |2,4.16 |3,4.88 |4,4.28 |5,4.25"
     };
     private static String[] denseVectors = {
             "|1.55 |3.53 |2.3 |0.7 |3.44 |2.33",

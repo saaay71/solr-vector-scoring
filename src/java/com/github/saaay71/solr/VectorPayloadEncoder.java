@@ -28,7 +28,7 @@ public class VectorPayloadEncoder extends AbstractEncoder implements PayloadEnco
         final boolean isSparse = i < offset + length;
         final float vectorElem;
         if(isSparse) {
-            final int sparseIndex = Integer.parseInt(CharBuffer.wrap(buffer, offset, i - offset).toString()) - 1;
+            final int sparseIndex = Integer.parseInt(CharBuffer.wrap(buffer, offset, i - offset).toString());
             PayloadHelper.encodeInt(sparseIndex, bytes, 0);
             vectorElem = Float.parseFloat(CharBuffer.wrap(buffer, offset + i, offset + length - (i + 1)).toString());
         } else {
