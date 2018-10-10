@@ -25,7 +25,7 @@
 
     <lib dir="${solr.install.dir:../../../..}/dist/plugins/" regex=".*\.jar" />
 
-    <queryParser name="vp" class="com.github.saaay71.solr.VectorQParserPlugin" />
+    <queryParser name="vp" class="com.github.saaay71.solr.query.VectorQParserPlugin" />
 
     <directoryFactory name="DirectoryFactory"
                       class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/>
@@ -40,6 +40,17 @@
         <updateLog class="${solr.ulog:solr.UpdateLog}"></updateLog>
     </updateHandler>
 
+    <updateRequestProcessorChain name="LSH">
+        <processor class="com.github.saaay71.solr.updateprocessor.LSHUpdateProcessorFactory" >
+            <int name="seed">5</int>
+            <int name="buckets">50</int>
+            <int name="stages">50</int>
+            <int name="dimensions">6</int>
+            <str name="field">vector</str>
+        </processor>
+        <processor class="solr.RunUpdateProcessorFactory" />
+    </updateRequestProcessorChain>
+
     <requestHandler name="/select" class="solr.SearchHandler">
         <lst name="defaults">
             <str name="echoParams">explicit</str>
@@ -51,5 +62,11 @@
     <indexConfig>
         <mergeScheduler class="${solr.mscheduler:org.apache.lucene.index.ConcurrentMergeScheduler}"/>
     </indexConfig>
+
+    <initParams path="/update/**">
+        <lst name="defaults">
+            <str name="update.chain">LSH</str>
+        </lst>
+    </initParams>
 </config>
 

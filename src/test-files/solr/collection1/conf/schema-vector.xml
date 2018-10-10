@@ -13,24 +13,21 @@
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
- limitations under the License.
+ limitations under the License.git
 -->
 <schema name="minimal" version="1.1">
     <fieldType name="string" class="solr.StrField"/>
     <fieldType name="int" class="${solr.tests.IntegerFieldType}" docValues="${solr.tests.numeric.dv}" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
     <fieldType name="long" class="${solr.tests.LongFieldType}" docValues="${solr.tests.numeric.dv}" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
-    <fieldType name="VectorField" class="solr.TextField" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true" storeOffsetsWithPositions="true">
-        <analyzer>
-            <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-            <filter class="solr.DelimitedPayloadTokenFilterFactory" encoder="com.github.saaay71.solr.VectorPayloadEncoder"/>
-        </analyzer>
-    </fieldType>
+    <fieldType name="VectorField" class="solr.BinaryField" stored="true" indexed="false" multiValued="false"/>
     <dynamicField name="*" type="string" indexed="true" stored="true"/>
     <!-- for versioning -->
     <field name="_version_" type="long" indexed="true" stored="true"/>
     <field name="_root_" type="string" indexed="true" stored="true" multiValued="false" required="false"/>
     <field name="id" type="string" indexed="true" stored="true"/>
-    <field name="vector" type="VectorField" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
+    <field name="_vector_" type="VectorField" />
+    <field name="_lsh_hash_" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="vector" type="string" indexed="true" stored="true"/>
     <dynamicField name="*_s"  type="string"  indexed="true"  stored="true" />
     <uniqueKey>id</uniqueKey>
 </schema>

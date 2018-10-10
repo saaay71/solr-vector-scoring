@@ -14,7 +14,7 @@ The plugin was developed and tested on Solr `6.6.0`.
 ```
 3. Add the plugin Query parser to solrconfig.xml:
 ```
-<queryParser name="vp" class="com.github.saaay71.solr.VectorQParserPlugin" />
+<queryParser name="vp" class="com.github.saaay71.solr.query.VectorQParserPlugin" />
 ```
 4. Add the fieldType `VectorField` to schema file(managed-schema):
 ```
