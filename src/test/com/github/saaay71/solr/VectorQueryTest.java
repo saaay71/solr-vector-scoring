@@ -107,6 +107,15 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
                 "//doc[1]/float[@name='score'][.='1.0']",
                 "count(//float[@name='score'][.='1.0'])=5"
         );
+
+        //test lsh + cosine similarity + lucene query
+        assertQ(req("q", "{!vp f=vector vector=\"" + denseVectors[0] + "\" lsh=\"true\" topNDocs=\"5\" v=\"id:1\"}",
+                "fl", "name, score, vector, _vector_, _lsh_hash_"),
+                "//*[@numFound='1']",
+                "//doc[1]/str[@name='vector'][.='" + denseVectors[0] + "']",
+                "//doc[1]/float[@name='score'][.='1.0']",
+                "count(//float[@name='score'][.='1.0'])=1"
+        );
     }
 
     @Test

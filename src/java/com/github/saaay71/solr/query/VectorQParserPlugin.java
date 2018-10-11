@@ -3,18 +3,13 @@ package com.github.saaay71.solr.query;
 import com.github.saaay71.solr.VectorUtils;
 import com.github.saaay71.solr.updateprocessor.LSHUpdateProcessorFactory;
 import info.debatty.java.lsh.LSHSuperBit;
-import org.apache.lucene.queryparser.simple.SimpleQueryParser;
-import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Query;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.core.InitParams;
 import org.apache.solr.core.SolrCore;
-import org.apache.solr.parser.SolrQueryParserBase;
-import org.apache.solr.request.LocalSolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.schema.FieldType;
 import org.apache.solr.search.*;
@@ -23,7 +18,6 @@ import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class VectorQParserPlugin extends QParserPlugin {
 
@@ -46,27 +40,22 @@ public class VectorQParserPlugin extends QParserPlugin {
 					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "vector missing");
 				}
 
-
-
 				FieldType ft = req.getCore().getLatestSchema().getFieldType(field);
-
-				Query subQuery = subQuery(localParams.get(QueryParsing.V), null).getQuery();
-				if(ft != null) {
-					VectorQuery q = new VectorQuery(subQuery);
-					q.setQueryString(localParams.toLocalParamsString()); 
-					query = q;
-				}
-
-
-				if (query == null) {
-					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Query is null");
-				}
+				String subQueryStr = localParams.get(QueryParsing.V);
+				VectorQuery q = null;
 
 				String[] vectorArray = vector.split(",");
 
-				if(localParams.getBool("lsh", false)) {
+				if(ft != null && !localParams.getBool("lsh", false)) {
+					q = new VectorQuery(subQuery(subQueryStr, null).getQuery());
+					q.setQueryString(localParams.toLocalParamsString());
+					query = q;
+				} else {
 					final int topNDocs = localParams.getInt("topNDocs", 100);
 					String lshQuery = computeLSHQueryString(vector, vectorArray);
+					if(subQueryStr != null && !subQueryStr.equals("")) {
+						lshQuery = subQuery(subQueryStr, null).getQuery() + " AND " + lshQuery;
+					}
 					Query luceneQuery = req.getCore().getQueryPlugin("lucene")
 							.createParser(lshQuery, localParams, params, req).parse();
 
