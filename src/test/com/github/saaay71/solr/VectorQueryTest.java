@@ -82,7 +82,7 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
 
         // test LSH
         int[] hash = superBit.hash(StrUtils.splitSmart(denseVectors[0], ',').stream().mapToDouble(Double::new).toArray());
-        String lshQueryString = IntStream.range(0, hash.length).mapToObj(x -> String.format("_lsh_hash_:\"%d_%d\"", x, hash[x]))
+        String lshQueryString = IntStream.range(0, hash.length).mapToObj(x -> String.format(Locale.ROOT, "_lsh_hash_:\"%d_%d\"", x, hash[x]))
                 .collect(Collectors.joining(" OR "));
         assertQ(req("q", lshQueryString),
                 "//*[@numFound='5']"
@@ -100,21 +100,21 @@ public class VectorQueryTest extends SolrTestCaseJ4 {
         );
 
         // test lsh + cosine similarity
-        assertQ(req("q", "{!vp f=vector vector=\"" + denseVectors[0] + "\" lsh=\"true\" topNDocs=\"5\"}",
+        assertQ(req("q", "{!vp f=vector vector=\"" + denseVectors[0] + "\" lsh=\"true\"}",
                 "fl", "name, score, vector, _vector_, _lsh_hash_"),
                 "//*[@numFound='5']",
                 "//doc[1]/str[@name='vector'][.='" + denseVectors[0] + "']",
-                "//doc[1]/float[@name='score'][.='1.0']",
-                "count(//float[@name='score'][.='1.0'])=5"
+                "//doc[1]/float[@name='score'][.>='1.0']",
+                "count(//float[@name='score'][.>='1.0'])=5"
         );
 
         //test lsh + cosine similarity + lucene query
-        assertQ(req("q", "{!vp f=vector vector=\"" + denseVectors[0] + "\" lsh=\"true\" topNDocs=\"5\" v=\"id:1\"}",
+        assertQ(req("q", "{!vp f=vector vector=\"" + denseVectors[1] + "\" lsh=\"true\" topNDocs=\"5\" v=\"id:2\"}",
                 "fl", "name, score, vector, _vector_, _lsh_hash_"),
                 "//*[@numFound='1']",
-                "//doc[1]/str[@name='vector'][.='" + denseVectors[0] + "']",
-                "//doc[1]/float[@name='score'][.='1.0']",
-                "count(//float[@name='score'][.='1.0'])=1"
+                "//doc[1]/str[@name='vector'][.='" + denseVectors[1] + "']",
+                "//doc[1]/float[@name='score'][.>='1.0']",
+                "count(//float[@name='score'][.>='1.0'])=1"
         );
     }
 

@@ -51,7 +51,7 @@ public class VectorQParserPlugin extends QParserPlugin {
 					q.setQueryString(localParams.toLocalParamsString());
 					query = q;
 				} else {
-					final int topNDocs = localParams.getInt("topNDocs", 100);
+					final int topNDocs = localParams.getInt("topNDocs", 200);
 					String lshQuery = computeLSHQueryString(vector, vectorArray);
 					if(subQueryStr != null && !subQueryStr.equals("")) {
 						lshQuery = subQuery(subQueryStr, null).getQuery() + " AND " + lshQuery;
@@ -63,13 +63,13 @@ public class VectorQParserPlugin extends QParserPlugin {
 					if(topNDocs == 0) {
 						return luceneQuery;
 					}
-					final int reRankWeight = localParams.getInt("weight", 10);
+					final double reRankWeight = localParams.getDouble(ReRankQParserPlugin.RERANK_WEIGHT, ReRankQParserPlugin.RERANK_WEIGHT_DEFAULT);
 					SolrParams computedLocalParams = new ModifiableSolrParams(localParams)
-							.set("reRankQuery", "{!vp f=" + field + " vector=" +vector + " lsh=\"false\"}")
-							.set("reRankDocs=", topNDocs)
-							.set("reRankWeight", reRankWeight)
+							.set(ReRankQParserPlugin.RERANK_QUERY, "{!vp f=" + field + " vector=\"" +vector + "\" lsh=\"false\"}")
+							.set(ReRankQParserPlugin.RERANK_DOCS, topNDocs)
+							.setNonNull(ReRankQParserPlugin.RERANK_WEIGHT, reRankWeight)
 							.set("q", lshQuery);
-					query = ((AbstractReRankQuery) req.getCore().getQueryPlugin(ReRankQParserPlugin.NAME)
+					return ((AbstractReRankQuery) req.getCore().getQueryPlugin(ReRankQParserPlugin.NAME)
 							.createParser(lshQuery, computedLocalParams, params, req).getQuery()).wrap(luceneQuery);
 				}
 
