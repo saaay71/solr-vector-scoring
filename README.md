@@ -138,6 +138,10 @@ Quering on other fields and with vector scoring.
 ```
 http://localhost:8983/solr/{your-collection-name}/query?fl=name,score,vector&q={!vp f=vector vector=\"3.54,0.4,4.16,4.88,4.28,4.25\" lsh=\"true\" topNDocs=\"5\" v=\"id:2\"}&fl=name,score,vector,_vector_,_lsh_hash_
 ```
+or
+```
+http://localhost:8983/solr/{your-collection-name}/query?fl=name,score,vector&q={!vp f=vector vector=\"3.54,0.4,4.16,4.88,4.28,4.25\" lsh=\"true\" topNDocs=\"5\"} id:2&fl=name,score,vector,_vector_,_lsh_hash_
+```
 
 result of query 2:
 ```
