@@ -1,0 +1,4 @@
+.idea/
+lucene-solr/
+target/
+*.iml
