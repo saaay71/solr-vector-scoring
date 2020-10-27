@@ -29,11 +29,6 @@ public class CustomVectorValueSource extends DoubleValuesSource {
 
 		}
 
-		if (vector != null) {
-			System.out.println("Input Vector size:" + vector.size());
-		} else {
-			System.out.println("Input Vector is null");
-		}
 	}
 
 	@Override
@@ -116,7 +111,7 @@ public class CustomVectorValueSource extends DoubleValuesSource {
 
 	@Override
 	public String toString() {
-		return "VectorValuesSource{" + "vector=" + vector + ", Field=" + field + '}';
+		return "CustomVectorValuesSource{" + "vector=" + vector + ", Field=" + field + '}';
 	}
 
 	@Override
