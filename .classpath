@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="VectorPlugin.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/lucene-analyzers-common-8.6.0.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/lucene-core-8.6.0.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/lucene-expressions-8.6.0.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/lucene-queries-8.6.0.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/solr-core-8.6.0.jar"/>
+	<classpathentry kind="lib" path="D:/Alexsei/apps/jars/8.6/required_jars/solr-solrj-8.6.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
