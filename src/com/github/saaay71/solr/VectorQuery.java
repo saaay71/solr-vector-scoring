@@ -2,13 +2,7 @@ package com.github.saaay71.solr;
 
 import java.io.IOException;
 import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.*;
 
 public class VectorQuery extends Query {
 	String queryStr = "";
@@ -22,18 +16,22 @@ public class VectorQuery extends Query {
 		this.queryStr = queryString;
 	}
 
-	@Override
-	public Weight createWeight(IndexSearcher searcher, boolean needsScores) throws IOException {
+	public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
 		Weight w;
 		if(q == null){
-			w =  new ConstantScoreWeight(this) {
+			w =  new ConstantScoreWeight(this, boost) {
+				@Override
+				public boolean isCacheable(LeafReaderContext lf) {
+					return false;
+				}
+
 				@Override
 				public Scorer scorer(LeafReaderContext context) throws IOException {
-					return new ConstantScoreScorer(this, score(), DocIdSetIterator.all(context.reader().maxDoc()));
+					return new ConstantScoreScorer(this, score(), scoreMode, DocIdSetIterator.all(context.reader().maxDoc()));
 				}
 			};
 		}else{
-			w = searcher.createWeight(q, needsScores);
+			w = searcher.createWeight(q, scoreMode, boost);
 		}
 		return w;
 	}

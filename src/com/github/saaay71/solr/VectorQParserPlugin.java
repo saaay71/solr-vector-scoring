@@ -1,5 +1,6 @@
 package com.github.saaay71.solr;
 
+import org.apache.lucene.queries.function.FunctionScoreQuery;
 import org.apache.lucene.search.Query;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.SolrParams;
@@ -18,7 +19,7 @@ public class VectorQParserPlugin extends QParserPlugin {
 			public Query parse() throws SyntaxError {
 				String field = localParams.get(QueryParsing.F);
 				String vector = localParams.get("vector");
-				boolean cosine = localParams.getBool("cosine", true);
+				// boolean cosine = localParams.getBool("cosine", true);
 
 				if (field == null) {
 					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "'f' not specified");
@@ -31,18 +32,17 @@ public class VectorQParserPlugin extends QParserPlugin {
 				Query subQuery = subQuery(localParams.get(QueryParsing.V), null).getQuery();
 
 				FieldType ft = req.getCore().getLatestSchema().getFieldType(field);
-				if(ft != null) {
+				if (ft != null) {
 					VectorQuery q = new VectorQuery(subQuery);
-					q.setQueryString(localParams.toLocalParamsString()); 
+					q.setQueryString(localParams.toLocalParamsString());
 					query = q;
 				}
-			
 
 				if (query == null) {
 					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Query is null");
 				}
 
-				return new VectorScoreQuery(query, vector, field, cosine);
+				return new FunctionScoreQuery(query, new CustomVectorValueSource(vector, field));
 
 			}
 		};
